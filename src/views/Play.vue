@@ -6,25 +6,35 @@ const currentWord = ref('');
 const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
 const inputBorderColor = ref('');
+const progress = ref<number[]>([]);
 
 const storedItems = localStorage.getItem('words');
 if (storedItems) {
   words.value = JSON.parse(storedItems);
+  progress.value = new Array(words.value.length).fill(0);
 }
-
-const i = Math.floor(Math.random() * words.value.length);
-currentWord.value = words.value[i];
 
 onMounted(() => {
   if (inputRef.value) {
     inputRef.value.focus();
   }
+  setRandomCurrentWord();
 });
+
+const setRandomCurrentWord = () => {
+  const i = Math.floor(Math.random() * words.value.length);
+  currentWord.value = words.value[i];
+};
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
     if (inputValue.value.trim().toLowerCase() === currentWord.value.trim().toLowerCase()) {
       inputBorderColor.value = 'focus:border-green-500';
+      const index = words.value.indexOf(currentWord.value);
+      if (index !== -1) {
+        progress.value[index] = Math.min(progress.value[index] + 10, 100);
+        setRandomCurrentWord()
+      }
     } else {
       inputBorderColor.value = 'focus:border-red-500';
     }
@@ -45,6 +55,11 @@ const handleKeydown = (event: KeyboardEvent) => {
         ref="inputRef"
     />
     <h1>{{ currentWord }}</h1>
+    <div class="flex justify-evenly mt-4">
+      <div v-for="(word, index) in words" :key="index" class="w-16 h-48 border rounded-md border-gray-400 relative">
+        <div :style="{ height: progress[index] + '%' }" class="w-full rounded-md absolute bottom-0 bg-blue-400"></div>
+      </div>
+    </div>
   </div>
 </template>
 
