@@ -9,7 +9,7 @@
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1">
-        <RouterLink to="/list" class="btn btn-ghost">Liste</RouterLink>
+        <RouterLink to="/words" class="btn btn-ghost">Liste</RouterLink>
       </ul>
     </div>
   </div>

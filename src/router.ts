@@ -1,11 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
 import Play from "./views/Play.vue";
-import ListEditing from "./views/ListEditing.vue";
+import Words from "./views/Words.vue";
 
 const routes = [
     { path: '/', component: Play },
-    { path: '/list', component: ListEditing },
+    { path: '/words', component: Words },
 ]
 
 const router = createRouter({

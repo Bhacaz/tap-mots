@@ -2,10 +2,10 @@
 import { ref, watch } from 'vue';
 
 const newItem = ref('');
-const items = ref([]);
+const words = ref([]);
 
-watch(items, (newItems) => {
-  localStorage.setItem('items', JSON.stringify(newItems));
+watch(words, (newItems) => {
+  localStorage.setItem('words', JSON.stringify(newItems));
 }, { deep: true });
 
 // Check if theres is a query params works with value. It is formated as Base64 joined by semi-colon
@@ -15,30 +15,30 @@ if (query) {
   let wordsValue = params.get('words');
   if (wordsValue) {
     const value = atob(wordsValue);
-    items.value = value.split(';');
+    words.value = value.split(';');
   }
 } else {
-  const storedItems = localStorage.getItem('items');
+  const storedItems = localStorage.getItem('words');
   if (storedItems) {
-    items.value = JSON.parse(storedItems);
+    words.value = JSON.parse(storedItems);
   }
 }
 
 const addItem = () => {
   if (newItem.value.trim()) {
-    items.value.unshift(newItem.value.trim().toLowerCase());
+    words.value.unshift(newItem.value.trim().toLowerCase());
     newItem.value = '';
   }
 };
 
 const editItem = (index: number, newValue: string) => {
   if (newValue.trim()) {
-    items.value[index] = newValue.trim();
+    words.value[index] = newValue.trim();
   }
 };
 
 const removeItem = (index: number) => {
-  items.value.splice(index, 1);
+  words.value.splice(index, 1);
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -48,7 +48,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const shareLink = () => {
-  return '/list?words=' + btoa(items.value.join(';'));
+  return '/words?words=' + btoa(words.value.join(';'));
 };
 
 </script>
@@ -62,8 +62,8 @@ const shareLink = () => {
       </button>
     </div>
     <ul class="list-none p-0">
-      <li v-for="(item, index) in items" :key="index" class="flex items-center mb-2">
-        <input v-model="items[index]" @blur="editItem(index, item)" class="input input-bordered flex-grow mr-2" />
+      <li v-for="(item, index) in words" :key="index" class="flex items-center mb-2">
+        <input v-model="words[index]" @blur="editItem(index, item)" class="input input-bordered flex-grow mr-2" />
         <button @click="removeItem(index)" class="btn btn-error">
           <i class="bi bi-trash"></i>
         </button>
