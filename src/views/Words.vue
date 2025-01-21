@@ -16,6 +16,7 @@ if (query) {
   let wordsValue = params.get('l');
   if (wordsValue) {
     const value = atob(wordsValue);
+    // @ts-ignore
     words.value = value.split(';');
   }
 } else {
@@ -27,6 +28,7 @@ if (query) {
 
 const addItem = () => {
   if (newItem.value.trim()) {
+    // @ts-ignore
     words.value.unshift(newItem.value.trim().toLowerCase());
     newItem.value = '';
   }
@@ -34,6 +36,7 @@ const addItem = () => {
 
 const editItem = (index: number, newValue: string) => {
   if (newValue.trim()) {
+    // @ts-ignore
     words.value[index] = newValue.trim();
   }
 };
