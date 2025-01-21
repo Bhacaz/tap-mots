@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Navbar from "./components/Navbar.vue";
-import ListEditing from "./components/ListEditing.vue";
+import ListEditing from "./views/ListEditing.vue";
 </script>
 
 <template>
   <Navbar />
-  <ListEditing items=""/>
+  <RouterView />
 </template>
 
 <style scoped>

@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const props = defineProps<{
-  items: string[];
-}>();
-
 const newItem = ref('');
-const items = ref([...props.items]);
+const items = ref([]);
 
 const addItem = () => {
   if (newItem.value.trim()) {
@@ -42,12 +38,13 @@ const handleKeydown = (event: KeyboardEvent) => {
     </div>
     <ul class="list-none p-0">
       <li v-for="(item, index) in items" :key="index" class="flex items-center mb-2">
-        <input v-model="items[index]" @blur="editItem(index, items[index])" class="input input-bordered flex-grow mr-2" />
+        <input v-model="items[index]" @blur="editItem(index, item)" class="input input-bordered flex-grow mr-2" />
         <button @click="removeItem(index)" class="btn btn-error">
           <i class="bi bi-trash"></i>
         </button>
       </li>
     </ul>
+    <h1>{{items.join('; ')}}</h1>
   </div>
 </template>
 
