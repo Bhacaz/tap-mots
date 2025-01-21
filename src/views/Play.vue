@@ -7,6 +7,7 @@ const currentWord = ref<Word | null>(null);
 const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
 const inputBorderColor = ref('');
+const showWrongWord = ref(false);
 
 const storedItems = localStorage.getItem('words');
 if (storedItems) {
@@ -39,9 +40,11 @@ const handleKeydown = (event: KeyboardEvent) => {
       setRandomCurrentWord();
     } else {
       inputBorderColor.value = 'focus:border-red-500';
+      showWrongWord.value = true;
     }
     setTimeout(() => {
       inputBorderColor.value = '';
+      showWrongWord.value = false;
     }, 2000);
     inputValue.value = '';
   }
@@ -50,19 +53,22 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 <template>
   <div class="max-w-lg mx-auto p-4">
+    <h1>{{ currentWord?.text }}</h1>
     <input
         v-model="inputValue"
         @keydown="handleKeydown"
         :class="`input input-bordered w-full mb-4 ${inputBorderColor}`"
         ref="inputRef"
     />
-    <h1>{{ currentWord?.text }}</h1>
+    <div class="h-8">
+      <h1 v-if="showWrongWord" class="text-red-500">{{ currentWord?.text }}</h1>
+    </div>
     <div class="flex justify-evenly mt-4">
       <div v-for="(word, index) in words" :key="index" >
         <div class="w-16 h-48 border rounded-md border-gray-400 relative">
           <div :style="{ height: word.completionPercentage() + '%' }" class="w-full rounded-md absolute bottom-0 bg-blue-400"></div>
         </div>
-        <p>{{ word.text }}</p>
+        <p v-if="word.completed()">{{ word.text }}</p>
       </div>
     </div>
   </div>
