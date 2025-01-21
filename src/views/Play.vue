@@ -22,8 +22,13 @@ onMounted(() => {
 });
 
 const setRandomCurrentWord = () => {
-  const i = Math.floor(Math.random() * words.value.length);
-  currentWord.value = words.value[i];
+  const availableWords = words.value.filter((_, index) => progress.value[index] < 100);
+  if (availableWords.length > 0) {
+    const i = Math.floor(Math.random() * availableWords.length);
+    currentWord.value = availableWords[i];
+  } else {
+    currentWord.value = '';
+  }
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -33,7 +38,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       const index = words.value.indexOf(currentWord.value);
       if (index !== -1) {
         progress.value[index] = Math.min(progress.value[index] + 10, 100);
-        setRandomCurrentWord()
+        setRandomCurrentWord();
       }
     } else {
       inputBorderColor.value = 'focus:border-red-500';
