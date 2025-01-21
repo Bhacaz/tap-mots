@@ -27,13 +27,19 @@ const removeItem = (index: number) => {
 </script>
 
 <template>
-  <div>
-    <input v-model="newItem" placeholder="Add new item" />
-    <button @click="addItem">Add</button>
-    <ul>
-      <li v-for="(item, index) in items" :key="index">
-        <input v-model="items[index]" @blur="editItem(index, items[index])" />
-        <button @click="removeItem(index)">Remove</button>
+  <div class="max-w-lg mx-auto p-4">
+    <div class="flex mb-4">
+        <input v-model="newItem" class="input input-bordered flex-grow mr-2" placeholder="Nouveau mot" />
+        <button @click="addItem" class="btn btn-primary">
+          <i class="bi bi-plus-lg"></i>
+        </button>
+      </div>
+    <ul class="list-none p-0">
+      <li v-for="(item, index) in items" :key="index" class="flex items-center mb-2">
+        <input v-model="items[index]" @blur="editItem(index, items[index])" class="input input-bordered flex-grow mr-2" />
+        <button @click="removeItem(index)" class="btn btn-error">
+          <i class="bi bi-trash"></i>
+        </button>
       </li>
     </ul>
   </div>
