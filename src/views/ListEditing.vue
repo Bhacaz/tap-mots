@@ -4,9 +4,24 @@ import { ref, watch } from 'vue';
 const newItem = ref('');
 const items = ref([]);
 
-const storedItems = localStorage.getItem('items');
-if (storedItems) {
-  items.value = JSON.parse(storedItems);
+watch(items, (newItems) => {
+  localStorage.setItem('items', JSON.stringify(newItems));
+}, { deep: true });
+
+// Check if theres is a query params works with value. It is formated as Base64 joined by semi-colon
+const query = window.location.search;
+if (query) {
+  const params = new URLSearchParams(query);
+  let wordsValue = params.get('words');
+  if (wordsValue) {
+    const value = atob(wordsValue);
+    items.value = value.split(';');
+  }
+} else {
+  const storedItems = localStorage.getItem('items');
+  if (storedItems) {
+    items.value = JSON.parse(storedItems);
+  }
 }
 
 const addItem = () => {
@@ -32,9 +47,10 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
-watch(items, (newItems) => {
-  localStorage.setItem('items', JSON.stringify(newItems));
-}, { deep: true });
+const shareLink = () => {
+  return '/list?words=' + btoa(items.value.join(';'));
+};
+
 </script>
 
 <template>
@@ -53,11 +69,12 @@ watch(items, (newItems) => {
         </button>
       </li>
     </ul>
-    <div class="flex justify-center">
+    <div class="flex justify-center space-x-3 pt-6">
       <RouterLink :to="
 		{
 			path: '/'
 		}" class="btn btn-accent">Jouer <i class="bi bi-play"></i></RouterLink>
+      <a class="btn btn-primary" :href="shareLink()">Partager <i class="bi bi-share"></i></a>
     </div>
   </div>
 </template>
