@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Navbar from "./components/Navbar.vue";
+import ListEditing from "./components/ListEditing.vue";
 </script>
 
 <template>
+  <Navbar />
+  <ListEditing items=""/>
   <button class="btn">Button</button>
   <button class="btn btn-neutral">Neutral</button>
   <button class="btn btn-primary">Primary</button>
