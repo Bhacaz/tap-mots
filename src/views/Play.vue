@@ -7,7 +7,7 @@ const currentWord = ref<Word | null>(null);
 const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
 const inputBorderColor = ref('');
-const showWrongWord = ref(false);
+const showWrongWord = ref<string | null>(null);
 
 const storedItems = localStorage.getItem('words');
 if (storedItems) {
@@ -45,16 +45,17 @@ const setRandomCurrentWord = () => {
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && currentWord.value) {
+    if (inputValue.value === '') { return; }
     if (inputValue.value.trim().toLowerCase() === currentWord.value.text.trim().toLowerCase()) {
       inputBorderColor.value = 'focus:border-green-500';
       currentWord.value.increaseProgress();
     } else {
       inputBorderColor.value = 'focus:border-red-500';
-      showWrongWord.value = true;
+      showWrongWord.value = currentWord.value.text;
     }
     setTimeout(() => {
       inputBorderColor.value = '';
-      showWrongWord.value = false;
+      showWrongWord.value = null;
     }, 2000);
     inputValue.value = '';
     setRandomCurrentWord();
@@ -76,7 +77,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       </button>
     </div>
     <div class="h-8">
-      <h1 v-if="showWrongWord" class="text-red-500">{{ currentWord?.text }}</h1>
+      <h1 v-if="showWrongWord" class="text-red-500">{{ showWrongWord }}</h1>
     </div>
     <div class="flex justify-evenly mt-4">
       <div v-for="(word, index) in words" :key="index" >
