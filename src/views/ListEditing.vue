@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const newItem = ref('');
 const items = ref([]);
+
+const storedItems = localStorage.getItem('items');
+if (storedItems) {
+  items.value = JSON.parse(storedItems);
+}
 
 const addItem = () => {
   if (newItem.value.trim()) {
@@ -26,6 +31,10 @@ const handleKeydown = (event: KeyboardEvent) => {
     addItem();
   }
 };
+
+watch(items, (newItems) => {
+  localStorage.setItem('items', JSON.stringify(newItems));
+}, { deep: true });
 </script>
 
 <template>
@@ -44,7 +53,12 @@ const handleKeydown = (event: KeyboardEvent) => {
         </button>
       </li>
     </ul>
-    <h1>{{items.join('; ')}}</h1>
+    <div class="flex justify-center">
+      <RouterLink :to="
+		{
+			path: '/'
+		}" class="btn btn-accent">Jouer <i class="bi bi-play"></i></RouterLink>
+    </div>
   </div>
 </template>
 
