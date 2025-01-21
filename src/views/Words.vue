@@ -3,16 +3,17 @@ import { ref, watch } from 'vue';
 
 const newItem = ref('');
 const words = ref([]);
+const tooltipMessage = ref('');
+const tooltipVisible = ref(false);
 
 watch(words, (newItems) => {
   localStorage.setItem('words', JSON.stringify(newItems));
 }, { deep: true });
 
-// Check if theres is a query params works with value. It is formated as Base64 joined by semi-colon
 const query = window.location.search;
 if (query) {
   const params = new URLSearchParams(query);
-  let wordsValue = params.get('words');
+  let wordsValue = params.get('l');
   if (wordsValue) {
     const value = atob(wordsValue);
     words.value = value.split(';');
@@ -48,9 +49,21 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 const shareLink = () => {
-  return '/words?words=' + btoa(words.value.join(';'));
+  return '/words?l=' + btoa(words.value.join(';'));
 };
 
+const copyLinkToClipboard = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.origin + shareLink());
+    tooltipMessage.value = 'Copier!';
+  } catch (err) {
+    tooltipMessage.value = 'Erreur!';
+  }
+  tooltipVisible.value = true;
+  setTimeout(() => {
+    tooltipVisible.value = false;
+  }, 2000);
+};
 </script>
 
 <template>
@@ -70,11 +83,8 @@ const shareLink = () => {
       </li>
     </ul>
     <div class="flex justify-center space-x-3 pt-6">
-      <RouterLink :to="
-		{
-			path: '/'
-		}" class="btn btn-accent">Jouer <i class="bi bi-play"></i></RouterLink>
-      <a class="btn btn-primary" :href="shareLink()">Partager <i class="bi bi-share"></i></a>
+      <RouterLink :to="{ path: '/' }" class="btn btn-accent">Jouer <i class="bi bi-play"></i></RouterLink>
+      <button @click="copyLinkToClipboard" class="btn btn-primary" :data-tip="tooltipMessage" :class="{ 'tooltip tooltip-bottom tooltip-open': tooltipVisible }">Partager <i class="bi bi-share"></i></button>
     </div>
   </div>
 </template>
