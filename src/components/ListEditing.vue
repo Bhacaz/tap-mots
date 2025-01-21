@@ -10,7 +10,7 @@ const items = ref([...props.items]);
 
 const addItem = () => {
   if (newItem.value.trim()) {
-    items.value.push(newItem.value.trim());
+    items.value.unshift(newItem.value.trim().toLowerCase());
     newItem.value = '';
   }
 };
@@ -24,16 +24,22 @@ const editItem = (index: number, newValue: string) => {
 const removeItem = (index: number) => {
   items.value.splice(index, 1);
 };
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter') {
+    addItem();
+  }
+};
 </script>
 
 <template>
   <div class="max-w-lg mx-auto p-4">
     <div class="flex mb-4">
-        <input v-model="newItem" class="input input-bordered flex-grow mr-2" placeholder="Nouveau mot" />
-        <button @click="addItem" class="btn btn-primary">
-          <i class="bi bi-plus-lg"></i>
-        </button>
-      </div>
+      <input v-model="newItem" @keydown="handleKeydown" class="input input-bordered flex-grow mr-2" placeholder="Ajouter un mot" />
+      <button @click="addItem" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
     <ul class="list-none p-0">
       <li v-for="(item, index) in items" :key="index" class="flex items-center mb-2">
         <input v-model="items[index]" @blur="editItem(index, items[index])" class="input input-bordered flex-grow mr-2" />
