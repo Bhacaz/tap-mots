@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Word } from '../models/Word';
+import Confetti from "../components/Confetti.vue";
 
 const words = ref<Word[]>([]);
 const currentWord = ref<Word | null>(null);
@@ -102,6 +103,7 @@ const handleKeydown = (event: KeyboardEvent) => {
       </div>
     </div>
   </div>
+  <Confetti v-if="words.filter(word => word.completed()).length === words.length" />
 </template>
 
 <style scoped>
