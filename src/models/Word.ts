@@ -1,5 +1,5 @@
 
-export const TIME_GOOD_ANSWER = 2;
+export const TIME_GOOD_ANSWER = 5;
 
 export class Word {
     text: string;
