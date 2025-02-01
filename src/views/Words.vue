@@ -45,12 +45,6 @@ const removeItem = (index: number) => {
   words.value.splice(index, 1);
 };
 
-const handleKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter') {
-    addItem();
-  }
-};
-
 const shareLink = () => {
   return '/words?l=' + btoa(words.value.join(';'));
 };
@@ -72,7 +66,7 @@ const copyLinkToClipboard = async () => {
 <template>
   <div class="max-w-lg mx-auto p-4">
     <div class="flex mb-4">
-      <input v-model="newItem" @keydown="handleKeydown" class="input input-bordered flex-grow mr-2" placeholder="Ajouter un mot" />
+      <input v-model="newItem" @keydown.enter="addItem" class="input input-bordered flex-grow mr-2" placeholder="Ajouter un mot" />
       <button @click="addItem" class="btn btn-primary">
         <i class="bi bi-plus-lg"></i>
       </button>
