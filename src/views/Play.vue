@@ -9,7 +9,8 @@ const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
 const inputBorderColor = ref('');
 const showWrongWord = ref<string | null>(null);
-const validationTimeout = ref<number | null>(null);
+const showWrongInput = ref<string | null>(null);
+const waitingForNextWord = ref(false);
 
 const storedItems = localStorage.getItem('words');
 if (storedItems) {
@@ -53,30 +54,42 @@ const setRandomCurrentWord = () => {
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Enter' && currentWord.value) {
     if (inputValue.value === '') { return; }
+    
+    if (waitingForNextWord.value) {
+      // User pressed Enter to continue after error
+      inputBorderColor.value = '';
+      showWrongWord.value = null;
+      showWrongInput.value = null;
+      waitingForNextWord.value = false;
+      inputValue.value = '';
+      setRandomCurrentWord();
+      return;
+    }
+    
     if (inputValue.value.trim().toLowerCase() === currentWord.value.text.trim().toLowerCase()) {
       inputBorderColor.value = 'focus:border-green-500';
       currentWord.value.increaseProgress();
+      inputValue.value = '';
+      setRandomCurrentWord();
+      
+      // Clear border after a short time for correct answers
+      setTimeout(() => {
+        inputBorderColor.value = '';
+      }, 2000);
     } else {
       inputBorderColor.value = 'focus:border-red-500';
       showWrongWord.value = currentWord.value.text;
+      showWrongInput.value = inputValue.value;
+      waitingForNextWord.value = true;
     }
-    if (validationTimeout.value) {
-      clearTimeout(validationTimeout.value);
-    }
-    validationTimeout.value = setTimeout(() => {
-      inputBorderColor.value = '';
-      showWrongWord.value = null;
-    }, 2000);
-    inputValue.value = '';
-    setRandomCurrentWord();
   }
 };
 </script>
 
 <template>
 <!--  <p>{{currentWord}}</p>-->
-  <div class="mx-auto p-4">
-    <div class="max-w-lg mx-auto">
+  <div class="p-4 flex flex-col items-center">
+    <div class="w-lg">
       <div class="flex pt-8">
         <input
             v-model="inputValue"
@@ -88,11 +101,15 @@ const handleKeydown = (event: KeyboardEvent) => {
           <i class="bi bi-volume-up text-2xl"></i>
         </button>
       </div>
-      <div class="h-8">
-        <h1 v-if="showWrongWord" class="text-red-500">{{ showWrongWord }}</h1>
-      </div>
     </div>
-    <div class="flex justify-evenly mt-4">
+    <div class="h-28">
+        <div v-if="showWrongWord && showWrongInput" class="text-center p-3 px-8 bg-base-200 rounded-lg shadow-sm">
+          <p class="text-red-500 font-bold">{{ showWrongInput }}</p>
+          <p class="text-green-500 font-bold">{{ showWrongWord }}</p>
+          <p class="text-sm text-base-content mt-2">Press Enter to continue</p>
+        </div>
+      </div>
+    <div class="flex justify-evenly ">
       <div v-for="(word, index) in words" :key="index" >
         <div class="w-16 h-48 border rounded-md border-gray-300 relative">
           <div :style="{ height: word.completionPercentage() + '%' }"
