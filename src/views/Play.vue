@@ -109,7 +109,7 @@ const handleKeydown = (event: KeyboardEvent) => {
           <p class="text-sm text-base-content mt-2">Appuyer ↵ pour continuer</p>
         </div>
       </div>
-    <div class="flex justify-evenly ">
+    <div class="flex justify-evenly w-full">
       <div v-for="(word, index) in words" :key="index" >
         <div class="w-16 h-48 border rounded-md border-gray-300 relative">
           <div :style="{ height: word.completionPercentage() + '%' }"
