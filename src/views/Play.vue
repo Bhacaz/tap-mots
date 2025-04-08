@@ -106,7 +106,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         <div v-if="showWrongWord && showWrongInput" class="text-center p-3 px-8 bg-base-200 rounded-lg shadow-sm">
           <p class="text-red-500 font-bold">{{ showWrongInput }}</p>
           <p class="text-green-500 font-bold">{{ showWrongWord }}</p>
-          <p class="text-sm text-base-content mt-2">Press Enter to continue</p>
+          <p class="text-sm text-base-content mt-2">Appuyer ↵ pour continuer</p>
         </div>
       </div>
     <div class="flex justify-evenly ">
@@ -114,7 +114,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         <div class="w-16 h-48 border rounded-md border-gray-300 relative">
           <div :style="{ height: word.completionPercentage() + '%' }"
      :class="word.completed() ? 'bg-emerald-300 border-white' : 'bg-blue-400'"
-     class="w-full rounded-md absolute bottom-0"></div>
+     class="w-full rounded-md absolute bottom-0 progress-bar"></div>
         </div>
         <p v-if="word.completed()" class="pt-2 text-center">{{ word.text }}</p>
       </div>
@@ -124,5 +124,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 </template>
 
 <style scoped>
-/* Add your styles here */
+.progress-bar {
+  transition: height 800ms ease-out;
+}
 </style>
