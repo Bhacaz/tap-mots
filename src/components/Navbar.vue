@@ -1,5 +1,15 @@
 <script setup lang="ts">
-
+function resetProgress() {
+  const stored = localStorage.getItem('words');
+  if (stored) {
+    const words = JSON.parse(stored);
+    // @ts-ignore
+    const resetWords = words.map(w => ({ text: w.text, progress: 0 }));
+    console.log('Resetting words:', resetWords);
+    localStorage.setItem('words', JSON.stringify(resetWords));
+  }
+  window.location.reload();
+}
 </script>
 
 <template>
@@ -9,6 +19,7 @@
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1">
+        <button @click="resetProgress" class="btn btn-ghost">Recommencer</button>
         <RouterLink to="/words" class="btn btn-ghost">Liste</RouterLink>
       </ul>
     </div>

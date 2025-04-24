@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 
 const newItem = ref('');
-const words = ref([]);
+const words = ref<{ text: string; progress: number }[]>([]);
 const tooltipMessage = ref('');
 const tooltipVisible = ref(false);
 const timeGoodAnswer = ref(5);
@@ -13,42 +13,32 @@ if (storedTime) {
   timeGoodAnswer.value = parseInt(storedTime, 10);
 }
 
-watch(timeGoodAnswer, (newVal) => {
-  localStorage.setItem('TIME_GOOD_ANSWER', newVal.toString());
-});
-
-watch(words, (newItems) => {
-  localStorage.setItem('words', JSON.stringify(newItems));
-}, { deep: true });
-
 const query = window.location.search;
 if (query) {
   const params = new URLSearchParams(query);
   let wordsValue = params.get('l');
   if (wordsValue) {
     const value = atob(wordsValue);
-    // @ts-ignore
-    words.value = value.split(';');
+    words.value = value.split(';').map((t: string) => ({ text: t, progress: 0 }));
   }
 } else {
   const storedItems = localStorage.getItem('words');
   if (storedItems) {
-    words.value = JSON.parse(storedItems);
+    const parsed = JSON.parse(storedItems);
+    words.value = parsed.map((t: any) => ({ text: t.text, progress: t.progress || 0 }));
   }
 }
 
 const addItem = () => {
   if (newItem.value.trim()) {
-    // @ts-ignore
-    words.value.unshift(newItem.value.trim().toLowerCase());
+    words.value.unshift({ text: newItem.value.trim().toLowerCase(), progress: 0 });
     newItem.value = '';
   }
 };
 
 const editItem = (index: number, newValue: string) => {
   if (newValue.trim()) {
-    // @ts-ignore
-    words.value[index] = newValue.trim();
+    words.value[index].text = newValue.trim();
   }
 };
 
@@ -57,7 +47,7 @@ const removeItem = (index: number) => {
 };
 
 const shareLink = () => {
-  return '/words?l=' + btoa(words.value.join(';'));
+  return '/words?l=' + btoa(words.value.map(w => w.text).join(';'));
 };
 
 const copyLinkToClipboard = async () => {
@@ -72,6 +62,14 @@ const copyLinkToClipboard = async () => {
     tooltipVisible.value = false;
   }, 2000);
 };
+
+watch(timeGoodAnswer, (newVal) => {
+  localStorage.setItem('TIME_GOOD_ANSWER', newVal.toString());
+});
+
+watch(words, (newItems) => {
+  localStorage.setItem('words', JSON.stringify(newItems));
+}, { deep: true });
 </script>
 
 <template>
@@ -84,7 +82,7 @@ const copyLinkToClipboard = async () => {
     </div>
     <ul class="list-none p-0">
       <li v-for="(item, index) in words" :key="index" class="flex items-center mb-2">
-        <input v-model="words[index]" @blur="editItem(index, item)" class="input input-bordered flex-grow mr-2" />
+        <input v-model="words[index].text" @blur="editItem(index, item.text)" class="input input-bordered flex-grow mr-2" />
         <button @click="removeItem(index)" class="btn btn-error">
           <i class="bi bi-trash"></i>
         </button>

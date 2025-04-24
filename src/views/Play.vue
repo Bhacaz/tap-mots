@@ -15,7 +15,17 @@ const waitingForNextWord = ref(false);
 const storedItems = localStorage.getItem('words');
 if (storedItems) {
   const parsedWords = JSON.parse(storedItems);
-  words.value = parsedWords.map((wordText: string) => new Word(wordText));
+  words.value = parsedWords.map((w: { text: string; progress: number }) => {
+    const word = new Word(w.text);
+    word.progress = w.progress || 0;
+    return word;
+  });
+}
+
+function saveProgress() {
+  // Save array of { text, progress }
+  const toStore = words.value.map(word => ({ text: word.text, progress: word.progress }));
+  localStorage.setItem('words', JSON.stringify(toStore));
 }
 
 onMounted(() => {
@@ -69,6 +79,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     if (inputValue.value.trim().toLowerCase() === currentWord.value.text.trim().toLowerCase()) {
       inputBorderColor.value = 'focus:border-green-500';
       currentWord.value.increaseProgress();
+      saveProgress(); // Save after progress update
       inputValue.value = '';
       setRandomCurrentWord();
       
