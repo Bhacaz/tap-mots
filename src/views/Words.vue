@@ -5,6 +5,17 @@ const newItem = ref('');
 const words = ref([]);
 const tooltipMessage = ref('');
 const tooltipVisible = ref(false);
+const timeGoodAnswer = ref(5);
+
+// Load TIME_GOOD_ANSWER from localStorage
+const storedTime = localStorage.getItem('TIME_GOOD_ANSWER');
+if (storedTime) {
+  timeGoodAnswer.value = parseInt(storedTime, 10);
+}
+
+watch(timeGoodAnswer, (newVal) => {
+  localStorage.setItem('TIME_GOOD_ANSWER', newVal.toString());
+});
 
 watch(words, (newItems) => {
   localStorage.setItem('words', JSON.stringify(newItems));
@@ -79,6 +90,10 @@ const copyLinkToClipboard = async () => {
         </button>
       </li>
     </ul>
+    <div class="mb-4 flex items-center">
+      <label for="timeGoodAnswer" class="mr-2">Nombre de bonnes réponses pour valider un mot :</label>
+      <input id="timeGoodAnswer" type="number" min="1" v-model="timeGoodAnswer" class="input input-bordered w-20" />
+    </div>
     <div class="flex justify-center space-x-3 pt-6">
       <RouterLink :to="{ path: '/' }" class="btn btn-accent">Jouer <i class="bi bi-play"></i></RouterLink>
       <button @click="copyLinkToClipboard" class="btn btn-primary" :data-tip="tooltipMessage" :class="{ 'tooltip tooltip-bottom tooltip-open': tooltipVisible }">Partager <i class="bi bi-share"></i></button>

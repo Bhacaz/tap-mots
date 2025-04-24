@@ -1,5 +1,7 @@
-
-export const TIME_GOOD_ANSWER = 5;
+export function getTimeGoodAnswer(): number {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('TIME_GOOD_ANSWER') : null;
+    return stored ? parseInt(stored, 10) : 5;
+}
 
 export class Word {
     text: string;
@@ -11,7 +13,7 @@ export class Word {
     }
 
     completed(): boolean {
-        return this.progress >= TIME_GOOD_ANSWER;
+        return this.progress >= getTimeGoodAnswer();
     }
 
     increaseProgress(): void {
@@ -19,6 +21,6 @@ export class Word {
     }
 
     completionPercentage(): number {
-        return this.progress / TIME_GOOD_ANSWER * 100;
+        return this.progress / getTimeGoodAnswer() * 100;
     }
 }
